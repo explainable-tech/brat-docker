@@ -1,6 +1,5 @@
 # start from a base ubuntu image
 FROM ubuntu
-MAINTAINER Cass Johnston <cassjohnston@gmail.com>
 
 # set users cfg file
 ARG USERS_CFG=users.json
@@ -16,15 +15,15 @@ RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Fetch  brat
 RUN mkdir /var/www/brat
-RUN curl http://weaver.nlplab.org/~brat/releases/brat-v1.3_Crunchy_Frog.tar.gz > /var/www/brat/brat-v1.3_Crunchy_Frog.tar.gz 
+RUN curl http://weaver.nlplab.org/~brat/releases/brat-v1.3_Crunchy_Frog.tar.gz > /var/www/brat/brat-v1.3_Crunchy_Frog.tar.gz
 RUN cd /var/www/brat && tar -xvzf brat-v1.3_Crunchy_Frog.tar.gz
 
 # create a symlink so users can mount their data volume at /bratdata rather than the full path
 RUN mkdir /bratdata && mkdir /bratcfg
-RUN chown -R www-data:www-data /bratdata /bratcfg 
+RUN chown -R www-data:www-data /bratdata /bratcfg
 RUN chmod o-rwx /bratdata /bratcfg
 RUN ln -s /bratdata /var/www/brat/brat-v1.3_Crunchy_Frog/data
-RUN ln -s /bratcfg /var/www/brat/brat-v1.3_Crunchy_Frog/cfg 
+RUN ln -s /bratcfg /var/www/brat/brat-v1.3_Crunchy_Frog/cfg
 
 # And make that location a volume
 VOLUME /bratdata
@@ -46,15 +45,11 @@ RUN a2enmod cgi
 
 EXPOSE 80
 
-# We can't use apachectl as an entrypoint because it starts apache and then exits, taking your container with it. 
+# We can't use apachectl as an entrypoint because it starts apache and then exits, taking your container with it.
 # Instead, use supervisor to monitor the apache process
 RUN mkdir -p /var/log/supervisor
 
-ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf 
+ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ADD users.json /bratcfg/users.json
 
 CMD ["/usr/bin/supervisord"]
-
-
-
-
-

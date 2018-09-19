@@ -52,4 +52,7 @@ RUN mkdir -p /var/log/supervisor
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 ADD users.json /bratcfg/users.json
 
+# Uncomment when you have your annotations file ready
+# COPY ./annotations.conf /bratcfg/annotations.conf
+
 CMD ["/usr/bin/supervisord"]
